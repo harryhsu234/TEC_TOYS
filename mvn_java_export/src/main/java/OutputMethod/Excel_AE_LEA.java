@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,8 +72,9 @@ public class Excel_AE_LEA extends OutputCommon {
 		int row_pos = 1;
 		for (Item obj : this.alItem) {
 			int col_pos = 0;
-
 			this.setValue(row_pos, col_pos++, obj.SONO);
+
+			
 			if(obj.SONO.equals("")) {
 				item_seq = 0;
 			}
@@ -82,6 +84,7 @@ public class Excel_AE_LEA extends OutputCommon {
 				col_pos++;
 			else
 				this.setValue(row_pos, col_pos++, item_seq);
+			
 			this.setValue(row_pos, col_pos++, obj.Item_Code);
 			this.setValue(row_pos, col_pos++, obj.DESC_OF_GOODS);
 			if(obj.QTY == 0)
@@ -143,8 +146,8 @@ public class Excel_AE_LEA extends OutputCommon {
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 
-			// 從第二行開始
-			if (row.getRowNum() < 1) {
+			// 從第三行開始
+			if (row.getRowNum() < 2) {
 				continue;
 			}
 
@@ -157,6 +160,20 @@ public class Excel_AE_LEA extends OutputCommon {
 			
 
 			String SONO = getCellString(row, 0);
+			if(SONO.isEmpty()) {
+				SONO = "";
+			}
+			else
+			{
+				try {
+					int iSono = new BigDecimal(SONO).intValue();
+					SONO = ""+iSono;
+				}
+				catch (Exception ex) {
+					SONO = "";
+					System.err.println("Excel_AE_LEA parse BigDecimal Error");
+				}
+			}
 			String SEQ = "";
 			String Item_Code = getCellString(row, 8);
 			String DESC_OF_GOODS = getCellString(row, 9);
